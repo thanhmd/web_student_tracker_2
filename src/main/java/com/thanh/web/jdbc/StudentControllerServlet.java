@@ -19,26 +19,53 @@ import jakarta.servlet.http.HttpServletResponse;
 @WebServlet("/StudentControllerServlet")
 public class StudentControllerServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	
+
 	private StudentDbUtil studentDbUtil;
-	
-	@Resource(name="jdbc/web_student_tracker")
-	
+
+	@Resource(name = "jdbc/web_student_tracker")
+
 	private DataSource dataSource;
 
-    @Override
+	@Override
 	public void init() throws ServletException {
 		super.init();
-		
+
 		try {
 			studentDbUtil = new StudentDbUtil(dataSource);
-		}
-		catch(Exception ece) {
+		} catch (Exception ece) {
 			throw new ServletException(ece);
 		}
 	}
 
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		String theCommand = request.getParameter("command");
+		if (theCommand == null) {
+			theCommand = "LIST";
+		}
+		switch (theCommand) {
+		case "LIST": {
+			listStudents(request, response);
+			break;
+		}
+		case "ADD": {
+			addStudent(request, response);
+		}
+		default: {
+			listStudents(request, response);
+		}
+		}
+	}
+
+	private void addStudent(HttpServletRequest request, HttpServletResponse response) {
+		String firstName = request.getParameter("firstName");
+		String lastName = request.getParameter("lastName");
+		String email = request.getParameter("email");
+
+		Student theStudent = new Student(firstName, lastName, email);
+
+		studentDbUtil.addStudent(theStudent);
+
 		listStudents(request, response);
 	}
 
@@ -46,12 +73,12 @@ public class StudentControllerServlet extends HttpServlet {
 		List<Student> students;
 		try {
 			students = studentDbUtil.getStudents();
-			
+
 			request.setAttribute("STUDENT_LIST", students);
-			
+
 			RequestDispatcher dispatcher = request.getRequestDispatcher("/list-students-jstl.jsp");
 			dispatcher.forward(request, response);
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
