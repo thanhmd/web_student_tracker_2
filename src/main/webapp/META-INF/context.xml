@@ -1,10 +1,9 @@
 <Context>
 
-  <Resource name="jdbc/web_student_tracker" 
-  			auth="Container" type="javax.sql.DataSource"
-               maxTotal="20" maxIdle="5" maxWaitMillis="10000"
-               username="root" password="my-secret-pw" 
-               driverClassName="com.mysql.cj.jdbc.Driver"
-               url="jdbc:mysql://localhost:33061/web_student_tracker?useSSL=false"/>
+	<Resource name="jdbc/web_student_tracker" auth="Container"
+		type="javax.sql.DataSource" maxTotal="20" maxIdle="5"
+		maxWaitMillis="10000" username="root" password="my-secret-pw"
+		driverClassName="com.mysql.cj.jdbc.Driver"
+		url="jdbc:mysql://localhost:33061/web_student_tracker?useSSL=false" />
 
 </Context>
