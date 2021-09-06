@@ -1,6 +1,6 @@
-<%@ page import="java.util.*, com.thanh.web.jdbc.* " %>
+<%@ page import="java.util.*, com.thanh.web.jdbc.* "%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+	pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -16,7 +16,7 @@
 		<div id="header">
 			<h2>FooBar University</h2>
 		</div>
-		
+
 		<div id="container">
 			<div id="conent">
 				<table>
@@ -25,15 +25,15 @@
 						<th>Last Name</th>
 						<th>Email</th>
 					</tr>
-					
+
 					<% for (Student tempStudent : theStudents) { %>
-						<tr>
-							<td> <%= tempStudent.getFirstName() %></td>
-							<td> <%= tempStudent.getLastName() %></td>
-							<td> <%= tempStudent.getEmail() %></td>
-						</tr>
+					<tr>
+						<td><%= tempStudent.getFirstName() %></td>
+						<td><%= tempStudent.getLastName() %></td>
+						<td><%= tempStudent.getEmail() %></td>
+					</tr>
 					<% } %>
-					
+
 				</table>
 			</div>
 		</div>

@@ -50,10 +50,62 @@ public class StudentControllerServlet extends HttpServlet {
 		}
 		case "ADD": {
 			addStudent(request, response);
+			break;
+		}
+		case "LOAD": {
+			loadStudent(request, response);
+			break;
+		}
+		case "UPDATE": {
+			updateStudent(request, response);
+		}
+		case "DELETE": {
+			deleteStudent(request, response);
 		}
 		default: {
 			listStudents(request, response);
 		}
+		}
+	}
+
+	private void deleteStudent(HttpServletRequest request, HttpServletResponse response) {
+		String theStudentId = request.getParameter("studentId");
+		
+		studentDbUtil.deleteStudent(theStudentId);
+		
+		listStudents(request, response);
+	}
+
+	private void updateStudent(HttpServletRequest request, HttpServletResponse response) {
+		int id = Integer.parseInt(request.getParameter("studentId"));
+		String firstName = request.getParameter("firstName");
+		String lastName = request.getParameter("lastName");
+		String email = request.getParameter("email");
+
+		Student theStudent = new Student(id, firstName, lastName, email);
+
+		studentDbUtil.updateStudent(theStudent);
+		listStudents(request, response);
+
+	}
+
+	private void loadStudent(HttpServletRequest request, HttpServletResponse response) {
+		try {
+			String theStudentId = request.getParameter("studentId");
+			Student theStudent = studentDbUtil.getStudents(theStudentId);
+
+			request.setAttribute("THE_STUDENT", theStudent);
+
+			RequestDispatcher dispatcher = request.getRequestDispatcher("/update-student-form.jsp");
+
+			dispatcher.forward(request, response);
+
+		} catch (ServletException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 

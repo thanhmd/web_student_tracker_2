@@ -3,6 +3,7 @@ package com.thanh.web.jdbc;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -74,19 +75,88 @@ public class StudentDbUtil {
 	public void addStudent(Student theStudent) {
 		Connection myConn = null;
 		PreparedStatement myStmt = null;
-		
+
 		try {
 			myConn = (Connection) dataSource.getConnection();
 			String sql = "insert into student " + "(first_name, last_name, email) " + "values (?, ?, ?)";
 			myStmt = myConn.prepareStatement(sql);
-			
+
 			myStmt.setString(1, theStudent.getFirstName());
 			myStmt.setString(2, theStudent.getLastName());
 			myStmt.setString(3, theStudent.getEmail());
-			
+
 			myStmt.execute();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			close(myConn, myStmt, null);
 		}
-		catch(Exception e) {
+	}
+
+	public Student getStudents(String theStudentId) {
+		Student theStudent = null;
+		Connection myConn = null;
+		PreparedStatement myStmt = null;
+		ResultSet myRs = null;
+		try {
+			myConn = (Connection) dataSource.getConnection();
+			String sql = "select * from student where id = ?";
+			myStmt = myConn.prepareStatement(sql);
+
+			myStmt.setInt(1, Integer.parseInt(theStudentId));
+
+			myRs = myStmt.executeQuery();
+
+			if (myRs.next()) {
+				String firstName = myRs.getString("first_name");
+				String lastName = myRs.getString("last_name");
+				String email = myRs.getString("email");
+				theStudent = new Student(Integer.parseInt(theStudentId), firstName, lastName, email);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			close(myConn, myStmt, null);
+		}
+		return theStudent;
+	}
+
+	public void updateStudent(Student theStudent) {
+		Connection myConn = null;
+		PreparedStatement myStmt = null;
+
+		try {
+			myConn = (Connection) dataSource.getConnection();
+			String sql = "update student " + "set first_name=?, last_name=?, email=? " + "where id=?";
+			myStmt = myConn.prepareStatement(sql);
+			myStmt.setString(1, theStudent.getFirstName());
+			myStmt.setString(2, theStudent.getLastName());
+			myStmt.setString(3, theStudent.getEmail());
+			myStmt.setInt(4, theStudent.getId());
+
+			myStmt.execute();
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			close(myConn, myStmt, null);
+		}
+	}
+
+	public void deleteStudent(String theStudentId) {
+		Connection myConn = null;
+		PreparedStatement myStmt = null;
+		try {
+			myConn = (Connection) dataSource.getConnection();
+			String sql = "delete from student where id=?";
+			myStmt = myConn.prepareStatement(sql);
+			myStmt.setInt(1, Integer.parseInt(theStudentId));
+			myStmt.execute();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
 			close(myConn, myStmt, null);
 		}
 	}
