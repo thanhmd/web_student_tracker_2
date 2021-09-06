@@ -48,10 +48,10 @@ public class StudentControllerServlet extends HttpServlet {
 			listStudents(request, response);
 			break;
 		}
-		case "ADD": {
-			addStudent(request, response);
-			break;
-		}
+//		case "ADD": {
+//			addStudent(request, response);
+//			break;
+//		}
 		case "LOAD": {
 			loadStudent(request, response);
 			break;
@@ -68,11 +68,34 @@ public class StudentControllerServlet extends HttpServlet {
 		}
 	}
 
+	@Override
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		try {
+			// read the "command" parameter
+			String theCommand = request.getParameter("command");
+
+			// route to the appropriate method
+			switch (theCommand) {
+
+			case "ADD":
+				addStudent(request, response);
+				break;
+
+			default:
+				listStudents(request, response);
+			}
+
+		} catch (Exception exc) {
+			throw new ServletException(exc);
+		}
+	}
+
 	private void deleteStudent(HttpServletRequest request, HttpServletResponse response) {
 		String theStudentId = request.getParameter("studentId");
-		
+
 		studentDbUtil.deleteStudent(theStudentId);
-		
+
 		listStudents(request, response);
 	}
 
@@ -109,7 +132,7 @@ public class StudentControllerServlet extends HttpServlet {
 		}
 	}
 
-	private void addStudent(HttpServletRequest request, HttpServletResponse response) {
+	private void addStudent(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String firstName = request.getParameter("firstName");
 		String lastName = request.getParameter("lastName");
 		String email = request.getParameter("email");
@@ -117,8 +140,11 @@ public class StudentControllerServlet extends HttpServlet {
 		Student theStudent = new Student(firstName, lastName, email);
 
 		studentDbUtil.addStudent(theStudent);
+		//listStudents(request, response);
 
-		listStudents(request, response);
+		// send back to main page (the student list)
+		// SEND AS REDIRECT to avoid multiple-browser reload issue
+		response.sendRedirect(request.getContextPath() + "/StudentControllerServlet?command=LIST");
 	}
 
 	private void listStudents(HttpServletRequest request, HttpServletResponse response) {
